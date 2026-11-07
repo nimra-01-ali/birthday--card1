@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff8f4">
+  <title>A Birthday Surprise</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 18px;
+      display: grid;
+      place-items: center;
+      color: #382d42;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #fff8f1, #f3edff);
+    }
+
+    .website {
+      width: min(100%, 520px);
+      min-height: 670px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border: 1px solid #f0e8f2;
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(62, 42, 75, 0.14);
+    }
+
+    .topbar {
+      padding: 20px 24px 14px;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #96759a;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .progress-track {
+      height: 5px;
+      margin-top: 15px;
+      overflow: hidden;
+      background: #f2edf3;
+      border-radius: 10px;
+    }
+
+    .progress {
+      width: 14.28%;
+      height: 100%;
+      background: linear-gradient(90deg, #e59aa5, #a88bd0);
+      border-radius: inherit;
+      transition: width 250ms ease;
+    }
+
+    .pages {
+      flex: 1;
+      display: grid;
+      padding: 0 24px;
+    }
+
+    .page {
+      display: none;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      animation: fadeIn 300ms ease;
+    }
+
+    .page.active { display: grid; }
+
+    .photo {
+      width: 100%;
+      height: 245px;
+      margin-bottom: 24px;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #a56b9b;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 {
+      margin: 0;
+      color: #483451;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    h1 { font-size: clamp(2.5rem, 11vw, 3.8rem); line-height: 1.05; }
+    h2 { font-size: clamp(2rem, 9vw, 2.8rem); }
+
+    .message {
+      max-width: 390px;
+      margin: 18px auto 0;
+      color: #746b79;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .icon {
+      margin-bottom: 15px;
+      font-size: 3.6rem;
+    }
+
+    .memory-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .memory {
+      padding: 18px 12px;
+      color: #665671;
+      background: #faf5fc;
+      border: 1px solid #f0e8f2;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .memory strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #966c9c;
+      font-size: 1.25rem;
+    }
+
+    .wish-list {
+      width: 100%;
+      display: grid;
+      gap: 11px;
+      margin-top: 22px;
+      text-align: left;
+    }
+
+    .wish {
+      padding: 14px 16px;
+      color: #665671;
+      background: #faf5fc;
+      border-radius: 13px;
+    }
+
+    .cake {
+      margin: 10px 0;
+      font-size: 5rem;
+    }
+
+    .buttons {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    button {
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    button:hover { transform: translateY(-2px); }
+
+    button:focus-visible {
+      outline: 3px solid #584364;
+      outline-offset: 3px;
+    }
+
+    .answer {
+      flex: 1;
+      color: white;
+      background: linear-gradient(110deg, #d77fa0, #9d7acb);
+      box-shadow: 0 8px 18px rgba(157, 122, 203, 0.22);
+    }
+
+    .answer.no {
+      color: #644f6b;
+      background: #f5eff7;
+      box-shadow: none;
+    }
+
+    .reply {
+      min-height: 28px;
+      margin: 15px 0 0;
+      color: #8d5f91;
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 24px 22px;
+    }
+
+    .nav-button {
+      min-width: 112px;
+      color: #654e70;
+      background: #f5eff7;
+    }
+
+    .nav-button.primary {
+      margin-left: auto;
+      color: white;
+      background: linear-gradient(110deg, #d77fa0, #9d7acb);
+    }
+
+    .nav-button:disabled {
+      visibility: hidden;
+      cursor: default;
+    }
+
+    .confetti {
+      position: fixed;
+      z-index: 5;
+      top: -12px;
+      width: 9px;
+      height: 14px;
+      pointer-events: none;
+      animation: fall 2.8s linear forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    @media (max-width: 420px) {
+      body { padding: 10px; }
+      .website { min-height: 640px; border-radius: 22px; }
+      .topbar { padding: 17px 18px 12px; }
+      .pages { padding: 0 18px; }
+      .navigation { padding: 16px 18px 18px; }
+      .photo { height: 234px; }
+      .memory { padding: 14px 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="website">
+    <header class="topbar">
+      <div class="brand">
+        <span>Birthday Surprise ✨</span>
+        <span id="pageCount">01 / 07</span>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress" id="progress"></div>
+      </div>
+    </header>
+
+    <div class="pages">
+      <!-- Page 1 -->
+      <section class="page active">
+        <img
+          class="photo"
+          src="./image.asset/profile pic.jpg" 
+          alt="make with love"
+        >
+        <p class="eyebrow">A special day is here</p>
+        <h1>Happy<br>Birthday! 🎂</h1>
+        <p class="message">
+          Aaj ka din sirf tumhare naam. Tumhari muskurahat is duniya ko aur khoobsurat bana deti hai.
+        </p>
+      </section>
+
+      <!-- Page 2 -->
+      <section class="page">
+        <div class="icon">💌</div>
+        <p class="eyebrow">A little birthday note</p>
+        <h2>Dear Mare jan</h2>
+        <p class="message">
+          ap meri zindagi ke bohat khaas insan ho. Umeed hai tumhara har din khushiyon,
+          pyaar aur khoobsurat surprises se bhara rahe.
+        </p>
+      </section>
+
+      <!-- Page 3 -->
+      <section class="page">
+        <div class="icon">📸</div>
+        <p class="eyebrow">The best moments</p>
+        <h2>Yaadgar Lamhe</h2>
+        <p class="message">
+          Har hansi, har baat aur har chhoti si yaad dil ke bohat qareeb hai.
+          Aise hi khoobsurat lamhe hamesha saath bante rahein.
+        </p>
+        <div class="memory-grid">
+          <div class="memory"><strong>😊</strong>Hamesha muskurate raho</div>
+          <div class="memory"><strong>✨</strong>Har pal chamakte raho</div>
+          <div class="memory"><strong>💜</strong>Khushiyan baantte raho</div>
+          <div class="memory"><strong>🌷</strong>Apne jaise pyare raho</div>
+        </div>
+      </section>
+
+      <!-- Page 4 -->
+      <section class="page">
+        <div class="icon">🌟</div>
+        <p class="eyebrow">My wishes for you</p>
+        <h2>Dil Se Dua</h2>
+        <div class="wish-list">
+          <div class="wish">💫 apka saare ache khwab poore hon.</div>
+          <div class="wish">🌸 apki zindagi pyaar aur sukoon se bhari ho.</div>
+          <div class="wish">🎁 Har naya din tumhare liye khushiyan laaye.</div>
+        </div>
+      </section>
+
+      <!-- Page 5 -->
+      <section class="page">
+        <div class="icon">🎂</div>
+        <p class="eyebrow"></p>
+        <h2>make with love</h2>
+        <div class="cake" aria-hidden="true">🧁</div>
+        <p class="message">
+          Ap mare jan ho ap sa barh kar mara lia kuch ni ha.
+          or uper sa long distance har 2 mint k bad apko dekhny k dil karta ha or uper sa apko mujhy waqt dena bht roti ho jab ap ignore karty ho.</p>
+
+        
+       
+      </section>
+
+      <!-- Page 6 -->
+      <section class="page">
+        <div class="icon"></div>
+        <p class="eyebrow">Do you love me ?</p>
+        <h2> Question</h2>
+        <p class="message">
+         kia ap mujh sa pyar karty ho ya ni 
+        </p>
+        <div class="buttons">
+          <button class="answer" id="yesButton" type="button">Yes, bilkul! </button>
+          <button class="answer no" id="noButton" type="button">No, nahi</button>
+        </div>
+        <p class="reply" id="reply" aria-live="polite"></p>
+      </section>
+
+      <!-- Page 7 -->
+      <section class="page">
+        <div class="icon">💖</div>
+        <p class="eyebrow">One last thing</p>
+        <h2>Happy Birthday!</h2>
+        <p class="message" id="finalMessage">
+          apka naya saal dher saari khushiyan, pyaar aur yaadgar lamhe lekar aaye.
+          Hamesha khush raho!
+        </p>
+        <p class="message"><strong>Made with love, just for you 💜</strong></p>
+      </section>
+    </div>
+
+    <nav class="navigation" aria-label="Birthday pages">
+      <button class="nav-button" id="backButton" type="button">← Back</button>
+      <button class="nav-button primary" id="nextButton" type="button">Next →</button>
+    </nav>
+  </main>
+
+  <script>
+    const pages = [...document.querySelectorAll(".page")];
+    const backButton = document.getElementById("backButton");
+    const nextButton = document.getElementById("nextButton");
+    const pageCount = document.getElementById("pageCount");
+    const progress = document.getElementById("progress");
+    const reply = document.getElementById("reply");
+    const finalMessage = document.getElementById("finalMessage");
+    let currentPage = 0;
+    let rsvpAnswer = "";
+
+    function showPage(index) {
+      currentPage = Math.max(0, Math.min(index, pages.length - 1));
+
+      pages.forEach((page, pageIndex) => {
+        page.classList.toggle("active", pageIndex === currentPage);
+      });
+
+      pageCount.textContent =
+        `${String(currentPage + 1).padStart(2, "0")} / ${String(pages.length).padStart(2, "0")}`;
+      progress.style.width = `${((currentPage + 1) / pages.length) * 100}%`;
+
+      backButton.disabled = currentPage === 0;
+      nextButton.disabled = currentPage === pages.length - 1;
+      nextButton.textContent = currentPage === 0 ? "Start surprise →" : "Next →";
+      nextButton.style.visibility = currentPage === pages.length - 1 ? "hidden" : "visible";
+    }
+
+    backButton.addEventListener("click", () => showPage(currentPage - 1));
+    nextButton.addEventListener("click", () => showPage(currentPage + 1));
+
+    document.getElementById("yesButton").addEventListener("click", () => {
+      rsvpAnswer = "yes";
+      reply.textContent =" thank you mujhy itna pyar deny k lia 🥳";
+      finalMessage.textContent =
+        "asa kasa ap mujh sa pyar ni karty ab ma hi ho isi par guzara karo ab ay bary nahi bolny wale 💜";
+      showConfetti();
+    });
+
+    document.getElementById("noButton").addEventListener("click", () => {
+      rsvpAnswer = "no";
+      reply.textContent = "Koi baat nahi! Tumhara din phir bhi bohat special hoga 😊";
+      finalMessage.textContent =
+        "Koi baat nahi—meri birthday wishes hamesha tumhare saath hain. Khush raho aur apna din enjoy karo! 💜";
+    });
+
+    function showConfetti() {
+      const colors = ["#ff9a8b", "#d69bea", "#8e9df7", "#ffd166", "#91d6c3"];
+
+      for (let i = 0; i < 45; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.setAttribute("aria-hidden", "true");
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = `${Math.random() * 0.7}s`;
+        document.body.appendChild(piece);
+        piece.addEventListener("animationend", () => piece.remove());
+      }
+    }
+
+    showPage(0);
+  </script>
+</body>
+</html>
+````
